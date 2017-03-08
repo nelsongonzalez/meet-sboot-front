@@ -9,6 +9,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="my-view3">
@@ -19,13 +21,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         padding: 10px;
       }
+
+     div[prefix] {
+       color: #737373;
+     }
+
+     paper-input[focused] div[prefix] {
+       color: var(--primary-color);
+     }
     </style>
 
     <div class="card">
-      <div class="circle">3</div>
-      <h1>View Three</h1>
-      <p>Modus commodo minimum eum te, vero utinam assueverit per eu.</p>
-      <p>Ea duis bonorum nec, falli paulo aliquid ei eum.Has at minim mucius aliquam, est id tempor laoreet.Pro saepe pertinax ei, ad pri animal labores suscipiantur.</p>
+      <paper-input value="Apostar $3 al marcador" disabled></paper-input>
+      <paper-input label="Marcador del equipo local" value="{{bet.predictionA}}" type="number">
+        <div prefix>Ecuador&nbsp;</div>
+      </paper-input>
+      <paper-input label="Marcador del equipo rival" value="{{bet.predictionB}}" type="number">
+        <div prefix>Brasil&nbsp;</div>
+      </paper-input>
+      <paper-button on-tap="_saveBet">Apostar</paper-button>
     </div>
   </template>
 

@@ -21,29 +21,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         padding: 10px;
       }
+
+     div[prefix] {
+       color: #737373;
+     }
+
+     paper-input[focused] div[prefix] {
+       color: var(--primary-color);
+     }
     </style>
 
     <div class="card">
-      <paper-input label="Equipo local" value="{{bet.teamA}}"></paper-input>
-      <paper-input label="Equipo rival" value="{{bet.teamB}}"></paper-input>
+      <paper-input label="Equipo local" value="{{event.teamA}}"></paper-input>
+      <paper-input label="Equipo rival" value="{{event.teamB}}"></paper-input>
       <paper-input
           label="Fecha"
-          value="{{bet.date}}"
+          value="{{event.date}}"
           allowed-pattern="[\d/]"
           pattern="\d{2}/\d{2}/\d{4}"
           auto-validate
           error-message="Ingrese una fecha con el formato dd/mm/yyyy"></paper-input>
       <paper-input
           label="Hora"
-          value="{{bet.time}}"
+          value="{{event.time}}"
           allowed-pattern="[\d:]"
           pattern="\d{2}:\d{2}"
           auto-validate
           error-message="Ingrese una hora con el formato hh:mm"></paper-input>
-      <paper-input label="Monto por marcador" value="{{bet.amount}}" type="number">
-        <div prefix>$</div>
+      <paper-input label="Monto para apuestas" value="{{event.amount}}" type="number">
+        <div prefix>$&nbsp;</div>
       </paper-input>
-      <paper-button on-tap="_saveBet">Guardar</paper-button>
+      <paper-button on-tap="_saveEvent">Guardar</paper-button>
     </div>
   </template>
 
@@ -52,24 +60,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'my-view2',
 
       properties: {
-        bet: {
+        event: {
           type: Object,
           value: {}
         }
       },
 
-      _saveBet: function() {
+      _saveEvent: function() {
         var that = this,
             onComplete = function(error) {
               if (error == null) {
-                that.bet = {};
+                that.event = {};
                 console.log('success!');
               } else {
                 console.log(error);
               }
             };
-        firebase.app('meet-apuestas').database().ref('/bets')
-                .push(this.bet, onComplete);
+        firebase.app('meet-apuestas').database().ref('/events')
+                .push(this.event, onComplete);
       }
     });
   </script>
