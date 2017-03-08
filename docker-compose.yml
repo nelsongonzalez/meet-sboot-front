@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+
+  app:
+    build: .
+    env_file: .env
+    command: polymer serve --hostname 0.0.0.0 --port $POLYMER_PORT
+    ports:
+      - $POLYMER_PORT:$POLYMER_PORT
+      - $FIREBASE_PORT:$FIREBASE_PORT
+    volumes:
+      - .:/front-sboot-gcloud
+      - ./bower_components:/front-sboot-gcloud/bower_components
+
