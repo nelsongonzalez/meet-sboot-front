@@ -9,11 +9,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="shared-styles.html">
 
-<dom-module id="my-view3">
+<dom-module id="my-new-bet">
   <template>
     <style include="shared-styles">
       :host {
@@ -31,6 +33,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      }
     </style>
 
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/new-bet/:event"
+        data="{{routeData}}"
+        tail="{{subroute}}"></app-route>
+
     <div class="card">
       <paper-input value="Apostar $3 al marcador" disabled></paper-input>
       <paper-input label="Marcador del equipo local" value="{{bet.predictionA}}" type="number">
@@ -45,7 +54,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <script>
     Polymer({
-      is: 'my-view3',
+      is: 'my-new-bet',
+
+      properties: {
+        bet: {
+          type: Object,
+          value: {}
+        }
+      },
+
+      _saveBet: function() {
+        var that = this,
+            user = firebase.app('meet-apuestas').auth().currentUser,
+            eventId = this.routeData.event,
+            onComplete = function(error) {
+              if (error == null) {
+                that.bet = {};
+                console.log('success!');
+                window.history.pushState({}, null, '/events');
+                window.dispatchEvent(new CustomEvent('location-changed'));
+              } else {
+                console.log(error);
+              }
+            };
+        this.bet.ownerName = user.displayName;
+        this.bet.ownerEmail = user.email;
+        firebase.app('meet-apuestas').database()
+                .ref('/bets/' + eventId + '/' + user.uid)
+                .set(this.bet, onComplete);
+      }
     });
   </script>
 </dom-module>

@@ -13,7 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="shared-styles.html">
 
-<dom-module id="my-view2">
+<dom-module id="my-new-event">
   <template>
     <style include="shared-styles">
       :host {
@@ -57,7 +57,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <script>
     Polymer({
-      is: 'my-view2',
+      is: 'my-new-event',
 
       properties: {
         event: {
@@ -72,11 +72,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               if (error == null) {
                 that.event = {};
                 console.log('success!');
+                window.history.pushState({}, null, '/events');
+                window.dispatchEvent(new CustomEvent('location-changed'));
               } else {
                 console.log(error);
               }
             };
-        firebase.app('meet-apuestas').database().ref('/events')
+        firebase.app('meet-apuestas').database()
+                .ref('/events')
                 .push(this.event, onComplete);
       }
     });

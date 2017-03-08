@@ -29,7 +29,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="shared-styles.html">
 
-<dom-module id="my-view1">
+<dom-module id="my-events">
   <template>
     <style include="shared-styles">
       :host {
@@ -71,20 +71,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <iron-icon icon="device:access-time"></iron-icon>[[result.time]]
           </div>
           <div class="card-actions">
-            <paper-button>Apostar</paper-button>
+            <paper-button on-tap="_navToNewBet" data-event$="[[result.$key]]">Apostar</paper-button>
           </div>
         </paper-card>
         <span class="spacer"></span>
       </template>
     </div>
 
-    <paper-fab icon="icons:add"></paper-fab>
+    <paper-fab icon="icons:add" on-tap="_navToNewEvent"></paper-fab>
   </template>
 
   <script>
     Polymer({
-      is: 'my-view1',
+      is: 'my-events',
 
+      _navToNewEvent: function() {
+        window.history.pushState({}, null, '/new-event');
+        window.dispatchEvent(new CustomEvent('location-changed'));
+      },
+
+      _navToNewBet: function(event) {
+        window.history.pushState({}, null, '/new-bet/' + event.target.dataset.event);
+        window.dispatchEvent(new CustomEvent('location-changed'));
+      }
     });
   </script>
 </dom-module>
