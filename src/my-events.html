@@ -72,6 +72,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </div>
           <div class="card-actions">
             <paper-button on-tap="_navToNewBet" data-event$="[[result.$key]]">Apostar</paper-button>
+            <paper-button on-tap="_endEvent" data-event$="[[result.$key]]">Finalizar</paper-button>
           </div>
         </paper-card>
         <span class="spacer"></span>
@@ -90,9 +91,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         window.dispatchEvent(new CustomEvent('location-changed'));
       },
 
-      _navToNewBet: function(event) {
-        window.history.pushState({}, null, '/new-bet/' + event.target.dataset.event);
+      _navToNewBet: function(e) {
+        var eventKey = e.target.dataset.event;
+        window.history.pushState({}, null, '/new-bet/' + eventKey);
         window.dispatchEvent(new CustomEvent('location-changed'));
+      },
+
+      _endEvent: function(e) {
+        var that = this,
+            onComplete = function(error) {
+              if (error == null) {
+                console.log('success!');
+              } else {
+                console.log(error);
+              }
+            },
+            eventKey = e.target.dataset.event,
+            result = { resultA: 1, resultB: 2, result: '1_2' };
+        firebase.app('meet-apuestas').database()
+                .ref('/results/' + eventKey)
+                .set(result, onComplete);
       }
     });
   </script>
