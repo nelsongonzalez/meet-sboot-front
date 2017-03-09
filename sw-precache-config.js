@@ -17,4 +17,8 @@ module.exports = {
     '/bower_components/webcomponentsjs/webcomponents-lite.min.js',
   ],
   navigateFallback: 'index.html',
+  // https://github.com/Polymer/polymer-build/issues/35
+  // This prevents the service worker from getting all up in the way of the OAuth window
+  // which starts with a /__ in its url
+  navigateFallbackWhitelist: [/^(?!\/__)/]
 };
