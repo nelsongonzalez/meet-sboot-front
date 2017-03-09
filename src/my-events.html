@@ -162,7 +162,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return event.teamA + ' vs ' + event.teamB;
       },
 
-      _totalWinners(event) {
+      _totalWinners: function(event) {
         if (event.winners) {
           if (event.winners === 1) {
             return event.winners + ' ganador';
