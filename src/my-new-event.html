@@ -23,7 +23,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
      div[prefix] {
-       color: #737373;
+       color: var(--secondary-text-color);
      }
 
      paper-input[focused] div[prefix] {
@@ -51,7 +51,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <paper-input label="Monto para apuestas" value="{{event.amount}}" type="number">
         <div prefix>$&nbsp;</div>
       </paper-input>
-      <paper-button on-tap="_saveEvent">Guardar</paper-button>
+      <paper-button on-tap="_saveEvent" raised>Guardar</paper-button>
     </div>
   </template>
 
@@ -78,6 +78,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 console.log(error);
               }
             };
+        this.event.amount = parseInt(this.event.amount);
+        this.event.status = 'new';
         firebase.app('meet-apuestas').database()
                 .ref('/events')
                 .push(this.event, onComplete);

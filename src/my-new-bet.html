@@ -25,7 +25,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
      div[prefix] {
-       color: #737373;
+       color: var(--secondary-text-color);
      }
 
      paper-input[focused] div[prefix] {
@@ -48,7 +48,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <paper-input label="Marcador del equipo rival" value="{{bet.predictionB}}" type="number">
         <div prefix>[[event.teamB]]&nbsp;</div>
       </paper-input>
-      <paper-button on-tap="_saveBet">Apostar</paper-button>
+      <paper-button on-tap="_saveBet" raised>Apostar</paper-button>
     </div>
   </template>
 
@@ -90,8 +90,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 console.log(error);
               }
             };
-        this.bet.ownerName = user.displayName;
-        this.bet.ownerEmail = user.email;
+        this.bet.name = user.displayName;
+        this.bet.email = user.email;
+        this.bet.predictionA = parseInt(this.bet.predictionA);
+        this.bet.predictionB = parseInt(this.bet.predictionB);
         this.bet.prediction = this.bet.predictionA + '_' + this.bet.predictionB;
         firebase.app('meet-apuestas').database()
                 .ref('/bets/' + eventKey + '/' + user.uid)
