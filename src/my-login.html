@@ -1,0 +1,89 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-login">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+     paper-button {
+       margin-bottom: 16px;
+       width: 180px;
+     }
+
+     paper-button.google {
+       background-color: var(--paper-red-a200);
+       color: var(--paper-red-50);
+     }
+
+     paper-button.github {
+       background-color: var(--paper-grey-500);
+       color: var(--paper-grey-50);
+     }
+
+     paper-button.facebook {
+       background-color: var(--paper-blue-a200);
+       color: var(--paper-blue-50);
+     }
+
+     paper-button.twitter {
+       background-color: var(--paper-light-blue-a200);
+       color: var(--paper-light-blue-50);
+     }
+
+     .flex-vertical {
+       @apply(--layout-vertical);
+       height: 100%;
+     }
+
+     .flex-center-justified {
+       @apply(--layout-horizontal);
+       @apply(--layout-center-justified);
+     }
+
+    </style>
+
+    <div class="card container flex-vertical">
+      <div class="flex-center-justified"><h2>Ingresar con:</h2></div>
+      <div class="flex-center-justified">
+        <paper-button class="google" on-tap="_login" data-provider="google" raised>Google</paper-button>
+      </div>
+      <!-- <div class="flex-center-justified">
+           <paper-button class="github" on-tap="_login" data-provider="github" raised>Github</paper-button>
+           </div>
+           <div class="flex-center-justified">
+           <paper-button class="facebook" on-tap="_login" data-provider="facebook" raised>Facebook</paper-button>
+           </div>
+           <div class="flex-center-justified">
+           <paper-button class="twitter" on-tap="_login" data-provider="twitter" raised>Twitter</paper-button>
+           </div> -->
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-login',
+
+      _login: function(e) {
+        this.fire('sign-in', { provider: e.target.dataset.provider }, { bubbles: false });
+      }
+
+    });
+  </script>
+</dom-module>
