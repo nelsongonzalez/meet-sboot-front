@@ -49,21 +49,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        };
      }
 
-     paper-card[own] {
-       --paper-card-background-color: var(--app-accent-background-color);
+     paper-card[status=finished] {
+       background-color: var(--app-accent-background-color);
      }
-
-     /* paper-card[own][status=new] .closed, paper-card[own][status=new] .finished {
-        display: none;
-        }
-
-        paper-card[own][status=closed] .new, paper-card[own][status=closed] .finished {
-        display: none;
-        }
-
-        paper-card[own][status=finished] .new, paper-card[own][status=finished] .closed {
-        display: none;
-        } */
 
      paper-card[status=new] .closed, paper-card[status=new] .finished,
      paper-card[status=closed] .new, paper-card[status=closed] .finished,
@@ -102,7 +90,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <paper-button on-tap="_closeEvent" data-event$="[[event.$key]]" class="new">Cerrar</paper-button>
             </template>
             <template is="dom-if" if="[[_ownEvent(event)]]">
-              <paper-button on-tap="_endEvent" data-event$="[[event.$key]]" class="closed">Finalizar</paper-button>
+              <paper-button on-tap="_navToNewMatch" data-event$="[[event.$key]]" class="closed">Finalizar</paper-button>
             </template>
             <paper-button on-tap="_navToBets" data-event$="[[event.$key]]">Ver</paper-button>
             <paper-button class="finished">Ganadores</paper-button>
@@ -130,6 +118,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         window.dispatchEvent(new CustomEvent('location-changed'));
       },
 
+      _navToNewMatch: function(e) {
+        var eventKey = e.target.dataset.event;
+        window.history.pushState({}, null, '/new-match/' + eventKey);
+        window.dispatchEvent(new CustomEvent('location-changed'));
+      },
+
       _closeEvent: function(e) {
         var that = this,
             user = firebase.app('meet-apuestas').auth().currentUser,
@@ -146,24 +140,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         updates['/users/' + user.uid  + '/events/' + eventKey + '/status'] = 'closed';
         firebase.app('meet-apuestas').database().ref()
                 .update(updates, onComplete);
-      },
-
-      _endEvent: function(e) {
-        var that = this,
-            user = firebase.app('meet-apuestas').auth().currentUser,
-            eventKey = e.target.dataset.event,
-            result = { resultA: 1, resultB: 0, result: '1_0' },
-            onComplete = function(error) {
-              if (error == null) {
-                console.log('success!');
-              } else {
-                console.log(error);
-              }
-            };
-        result.owner = user.uid;
-        firebase.app('meet-apuestas').database()
-                .ref('/server/results/' + eventKey)
-                .set(result, onComplete);
       },
 
       _title: function(event) {

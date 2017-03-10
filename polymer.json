@@ -5,6 +5,7 @@
     "src/my-events.html",
     "src/my-new-event.html",
     "src/my-new-bet.html",
+    "src/my-new-match.html",
     "src/my-view404.html"
   ],
   "sourceGlobs": [

@@ -1,0 +1,105 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-new-match">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+     div[prefix] {
+       color: var(--secondary-text-color);
+     }
+
+     paper-input[focused] div[prefix] {
+       color: var(--primary-color);
+     }
+    </style>
+
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/new-match/:eventKey"
+        data="{{routeData}}"
+        tail="{{subroute}}"></app-route>
+
+    <div class="card">
+      <paper-input value="Finalizar evento [[event.teamA]] vs [[event.teamB]]" disabled></paper-input>
+      <paper-input label="Marcador final del equipo local" value="{{result.resultA}}" type="number">
+        <div prefix>[[event.teamA]]&nbsp;</div>
+      </paper-input>
+      <paper-input label="Marcador final del equipo rival" value="{{result.resultB}}" type="number">
+        <div prefix>[[event.teamB]]&nbsp;</div>
+      </paper-input>
+      <paper-button on-tap="_endEvent" raised>Guardar</paper-button>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-new-match',
+
+      properties: {
+        result: {
+          type: Object,
+          value: {}
+        }
+      },
+
+      observers: [
+        '_routeEventKeyChanged(routeData.eventKey)',
+      ],
+
+      _routeEventKeyChanged: function(eventKey) {
+        var that = this;
+        firebase.app('meet-apuestas').database()
+                .ref('/public/events/' + eventKey).once('value')
+                .then(function(snapshot) {
+                  that.event = snapshot.val();
+                });
+      },
+
+
+      _endEvent: function(e) {
+        var that = this,
+            user = firebase.app('meet-apuestas').auth().currentUser,
+            eventKey = this.routeData.eventKey,
+            onComplete = function(error) {
+              if (error == null) {
+                that.result = {};
+                console.log('success!');
+                window.history.pushState({}, null, '/events');
+                window.dispatchEvent(new CustomEvent('location-changed'));
+              } else {
+                console.log(error);
+              }
+            };
+        this.result.owner = user.uid;
+        this.result.resultA = parseInt(this.result.resultA);
+        this.result.resultB = parseInt(this.result.resultB);
+        this.result.result = this.result.resultA + '_' + this.result.resultB;
+        firebase.app('meet-apuestas').database()
+                .ref('/server/results/' + eventKey)
+                .set(this.result, onComplete);
+      }
+
+    });
+  </script>
+</dom-module>
