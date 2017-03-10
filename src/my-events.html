@@ -9,13 +9,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/iron-icons/device-icons.html">
-<link rel="import" href="../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
-<link rel="import" href="../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="shared-styles.html">
 
@@ -59,6 +55,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        display: none;
      }
 
+     paper-card[winners="0"] .card-actions {
+       display: none;
+     }
+
      .spacer {
        display: block;
        height: 8px;
@@ -77,7 +77,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <div class="card">
       <template is="dom-repeat" items="[[data]]" as="event">
-        <paper-card heading="[[event.teamA]] vs [[event.teamB]]" own$="[[_ownEvent(event)]]" status$="[[event.status]]">
+        <paper-card
+            heading="[[event.teamA]] vs [[event.teamB]]"
+            own$="[[_ownEvent(event)]]"
+            status$="[[event.status]]"
+            winners$="[[event.winners]]">
           <div class="card-content">
             <div class="new light">Apuesta $[[event.amount]] al marcador</div>
             <div class="closed light">Las apuestas se cerraron</div>
@@ -92,8 +96,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <template is="dom-if" if="[[_ownEvent(event)]]">
               <paper-button on-tap="_navToNewMatch" data-event$="[[event.$key]]" class="closed">Finalizar</paper-button>
             </template>
-            <paper-button on-tap="_navToBets" data-event$="[[event.$key]]">Ver</paper-button>
-            <paper-button class="finished">Ganadores</paper-button>
+            <paper-button on-tap="_navToWinners" data-event$="[[event.$key]]" class="finished">Ganadores</paper-button>
           </div>
         </paper-card>
         <span class="spacer"></span>
@@ -121,6 +124,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _navToNewMatch: function(e) {
         var eventKey = e.target.dataset.event;
         window.history.pushState({}, null, '/new-match/' + eventKey);
+        window.dispatchEvent(new CustomEvent('location-changed'));
+      },
+
+      _navToWinners: function(e) {
+        var eventKey = e.target.dataset.event;
+        window.history.pushState({}, null, '/winners/' + eventKey);
         window.dispatchEvent(new CustomEvent('location-changed'));
       },
 
