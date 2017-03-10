@@ -34,20 +34,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="card">
       <paper-input label="Equipo local" value="{{event.teamA}}"></paper-input>
       <paper-input label="Equipo rival" value="{{event.teamB}}"></paper-input>
-      <paper-input
-          label="Fecha"
-          value="{{event.date}}"
-          allowed-pattern="[\d/]"
-          pattern="\d{2}/\d{2}/\d{4}"
-          auto-validate
-          error-message="Ingrese una fecha con el formato dd/mm/yyyy"></paper-input>
-      <paper-input
-          label="Hora"
-          value="{{event.time}}"
-          allowed-pattern="[\d:]"
-          pattern="\d{2}:\d{2}"
-          auto-validate
-          error-message="Ingrese una hora con el formato hh:mm"></paper-input>
+      <!-- <paper-input
+           label="Fecha"
+           value="{{event.date}}"
+           allowed-pattern="[\d/]"
+           pattern="\d{2}/\d{2}/\d{4}"
+           auto-validate
+           error-message="Ingrese una fecha con el formato dd/mm/yyyy"></paper-input>
+           <paper-input
+           label="Hora"
+           value="{{event.time}}"
+           allowed-pattern="[\d:]"
+           pattern="\d{2}:\d{2}"
+           auto-validate
+           error-message="Ingrese una hora con el formato hh:mm"></paper-input> -->
       <paper-input label="Monto para apuestas" value="{{event.amount}}" type="number">
         <div prefix>$&nbsp;</div>
       </paper-input>
@@ -68,6 +68,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _saveEvent: function() {
         var that = this,
+            user = firebase.app('meet-apuestas').auth().currentUser,
+            newEventKey = firebase.app('meet-apuestas').database().ref().child('events').push().key,
+            publicEvent,
+            updates = {},
             onComplete = function(error) {
               if (error == null) {
                 that.event = {};
@@ -80,9 +84,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             };
         this.event.amount = parseInt(this.event.amount);
         this.event.status = 'new';
-        firebase.app('meet-apuestas').database()
-                .ref('/events')
-                .push(this.event, onComplete);
+        publicEvent = JSON.parse(JSON.stringify(this.event));
+        publicEvent.owner = user.uid;
+        updates['/users/' + user.uid + '/events/' + newEventKey] = this.event;
+        updates['/public/events/' + newEventKey] = publicEvent;
+        firebase.app('meet-apuestas').database().ref()
+                .update(updates, onComplete);
       }
     });
   </script>

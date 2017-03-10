@@ -70,7 +70,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _routeEventKeyChanged: function(eventKey) {
         var that = this;
         firebase.app('meet-apuestas').database()
-                .ref('/events/' + eventKey).once('value')
+                .ref('/public/events/' + eventKey).once('value')
                 .then(function(snapshot) {
                   that.event = snapshot.val();
                 });
@@ -96,7 +96,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.bet.predictionB = parseInt(this.bet.predictionB);
         this.bet.prediction = this.bet.predictionA + '_' + this.bet.predictionB;
         firebase.app('meet-apuestas').database()
-                .ref('/bets/' + eventKey + '/' + user.uid)
+                .ref('/public/bets/' + eventKey + '/' + user.uid)
                 .set(this.bet, onComplete);
       }
     });

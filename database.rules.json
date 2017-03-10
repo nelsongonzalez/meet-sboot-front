@@ -1,9 +1,11 @@
 {
   "rules": {
-    "bets": {
-      "$bet": {
-        ".indexOn": ["prediction"]
-      }
+    "public": {
+      "bets": {
+        "$event": {
+          ".indexOn": ["prediction"]
+        }
+    }
     },
     ".read": true,
     ".write": true

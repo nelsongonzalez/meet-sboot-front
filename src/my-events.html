@@ -49,11 +49,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        };
      }
 
-     paper-card[finished] {
+     paper-card[own] {
        --paper-card-background-color: var(--app-accent-background-color);
      }
 
-     .card-actions[finished] {
+     /* paper-card[own][status=new] .closed, paper-card[own][status=new] .finished {
+        display: none;
+        }
+
+        paper-card[own][status=closed] .new, paper-card[own][status=closed] .finished {
+        display: none;
+        }
+
+        paper-card[own][status=finished] .new, paper-card[own][status=finished] .closed {
+        display: none;
+        } */
+
+     paper-card[status=new] .closed, paper-card[status=new] .finished,
+     paper-card[status=closed] .new, paper-card[status=closed] .finished,
+     paper-card[status=finished] .new, paper-card[status=finished] .closed {
        display: none;
      }
 
@@ -70,36 +84,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <firebase-query
         id="query"
         app-name="meet-apuestas"
-        path="/events"
-        data="{{data}}">
-    </firebase-query>
+        path="/public/events"
+        data="{{data}}"></firebase-query>
 
     <div class="card">
       <template is="dom-repeat" items="[[data]]" as="event">
-        <paper-card heading="[[_title(event)]]" finished$="[[_equals(event.status, 'finished')]]">
+        <paper-card heading="[[event.teamA]] vs [[event.teamB]]" own$="[[_ownEvent(event)]]" status$="[[event.status]]">
           <div class="card-content">
-            <template is="dom-if" if="[[_equals(event.status, 'finished')]]">
-              <div>[[_totalWinners(event)]]</div>
-            </template>
-            <div class="light">
-              <template is="dom-if" if="[[_equals(event.status, 'new')]]">
-                <div>Apuesta $[[event.amount]] al marcador</div>
-              </template>
-              <div>[[event.date]], [[event.time]]</div>
-            </div>
+            <div class="new light">Apuesta $[[event.amount]] al marcador</div>
+            <div class="closed light">Las apuestas se cerraron</div>
+            <div class="finished light">[[event.teamA]] [[event.resultA]], [[event.teamB]] [[event.resultB]]</div>
+            <div class="finished light">Ganadores: [[event.winners]]</div>
           </div>
-          <div class="card-actions" finished$="[[_equals(event.status, 'finished')]]">
-            <template is="dom-if" if="[[_equals(event.status, 'new')]]">
-              <paper-button on-tap="_navToNewBet" data-event$="[[event.$key]]">Apostar</paper-button>
-              <paper-button on-tap="_closeEvent" data-event$="[[event.$key]]">Cerrar</paper-button>
+          <div class="card-actions">
+            <paper-button on-tap="_navToNewBet" data-event$="[[event.$key]]" class="new">Apostar</paper-button>
+            <template is="dom-if" if="[[_ownEvent(event)]]">
+              <paper-button on-tap="_closeEvent" data-event$="[[event.$key]]" class="new">Cerrar</paper-button>
             </template>
-            <template is="dom-if" if="[[_equals(event.status, 'closed')]]">
-              <!-- <paper-button on-tap="_navToBets" data-event$="[[event.$key]]">Ver apuestas</paper-button> -->
-              <paper-button on-tap="_endEvent" data-event$="[[event.$key]]">Finalizar 1 - 0</paper-button>
+            <template is="dom-if" if="[[_ownEvent(event)]]">
+              <paper-button on-tap="_endEvent" data-event$="[[event.$key]]" class="closed">Finalizar</paper-button>
             </template>
-            <template is="dom-if" if="[[_equals(event.status, 'finished')]]">
-              <paper-button>Ver ganadores</paper-button>
-            </template>
+            <paper-button on-tap="_navToBets" data-event$="[[event.$key]]">Ver</paper-button>
+            <paper-button class="finished">Ganadores</paper-button>
           </div>
         </paper-card>
         <span class="spacer"></span>
@@ -126,32 +132,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _closeEvent: function(e) {
         var that = this,
+            user = firebase.app('meet-apuestas').auth().currentUser,
+            eventKey = e.target.dataset.event,
+            updates = {},
             onComplete = function(error) {
               if (error == null) {
                 console.log('success!');
               } else {
                 console.log(error);
               }
-            },
-            eventKey = e.target.dataset.event;
-        firebase.app('meet-apuestas').database()
-                .ref('/events/' + eventKey + '/status')
-                .set('closed', onComplete);
+            };
+        updates['/public/events/' + eventKey + '/status'] = 'closed';
+        updates['/users/' + user.uid  + '/events/' + eventKey + '/status'] = 'closed';
+        firebase.app('meet-apuestas').database().ref()
+                .update(updates, onComplete);
       },
 
       _endEvent: function(e) {
         var that = this,
+            user = firebase.app('meet-apuestas').auth().currentUser,
+            eventKey = e.target.dataset.event,
+            result = { resultA: 1, resultB: 0, result: '1_0' },
             onComplete = function(error) {
               if (error == null) {
                 console.log('success!');
               } else {
                 console.log(error);
               }
-            },
-            eventKey = e.target.dataset.event,
-            result = { resultA: 1, resultB: 0, result: '1_0' };
+            };
+        result.owner = user.uid;
         firebase.app('meet-apuestas').database()
-                .ref('/results/' + eventKey)
+                .ref('/server/results/' + eventKey)
                 .set(result, onComplete);
       },
 
@@ -172,8 +183,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return '0 ganadores';
       },
 
-      _equals: function(val1, val2) {
-        return val1 === val2;
+      _ownEvent: function(event) {
+        var user = firebase.app('meet-apuestas').auth().currentUser;
+        return event.owner === user.uid;
       }
     });
   </script>
