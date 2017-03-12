@@ -64,9 +64,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
      _routeEventKeyChanged(eventKey) {
        if (!(eventKey === undefined)) {
-         this.debounce('routeEventKeyChanged', function() {
-           this.eventKey = eventKey;
-         });
+         console.log('winners', eventKey);
+         this.eventKey = eventKey;
        }
      }
    }
