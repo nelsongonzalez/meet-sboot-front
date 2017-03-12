@@ -20,25 +20,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../bower_components/web-component-tester/browser.js"></script>
 
     <!-- Import the element to test -->
-    <link rel="import" href="../src/my-view1.html">
+    <link rel="import" href="../src/my-view404.html">
   </head>
   <body>
-    <test-fixture id="basic">
+    <test-fixture id="BasicView">
       <template>
-        <my-view1></my-view1>
+        <my-view404></my-view404>
       </template>
     </test-fixture>
 
     <script>
-      suite('my-view1 tests', function() {
-        var home;
-
-        setup(function() {
-          home = fixture('basic');
-        });
-
+      suite('my-view404 tests', function() {
         test('Number in circle should be 1', function() {
-          var circle = Polymer.dom(home.root).querySelector('.circle');
+          var myView = fixture('BasicView');
+          var circle = myView.shadowRoot.querySelector('.circle');
           assert.equal(circle.textContent, '1');
         });
       });

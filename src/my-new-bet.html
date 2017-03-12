@@ -8,12 +8,12 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
-<link rel="import" href="shared-styles.html">
+<!-- <link rel="import" href="shared-styles.html"> -->
 
 <dom-module id="my-new-bet">
   <template>
@@ -53,52 +53,62 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-    Polymer({
-      is: 'my-new-bet',
+   class MyNewBet extends Polymer.Element {
 
-      properties: {
-        bet: {
-          type: Object,
-          value: {}
-        }
-      },
+     static get is() { return 'my-new-bet'; }
 
-      observers: [
-        '_routeEventKeyChanged(routeData.eventKey)',
-      ],
+     static get properties() {
+       return {
+         bet: {
+           type: Object,
+           value: {}
+         }
+       };
+     }
 
-      _routeEventKeyChanged: function(eventKey) {
-        var that = this;
-        firebase.app('meet-apuestas').database()
-                .ref('/public/events/' + eventKey).once('value')
-                .then(function(snapshot) {
-                  that.event = snapshot.val();
-                });
-      },
+     static get observers() {
+       return [
+         '_routeEventKeyChanged(routeData.eventKey)'
+       ];
+     }
 
-      _saveBet: function() {
-        var that = this,
-            user = firebase.app('meet-apuestas').auth().currentUser,
-            eventKey = this.routeData.eventKey,
-            onComplete = function(error) {
-              if (error == null) {
-                that.bet = {};
-                console.log('success!');
-                window.history.pushState({}, null, '/events');
-                window.dispatchEvent(new CustomEvent('location-changed'));
-              } else {
-                console.log(error);
-              }
-            };
-        this.bet.name = user.displayName;
-        this.bet.email = user.email;
-        this.bet.predictionA = parseInt(this.bet.predictionA);
-        this.bet.predictionB = parseInt(this.bet.predictionB);
-        this.bet.prediction = this.bet.predictionA + '_' + this.bet.predictionB;
-        firebase.app('meet-apuestas').database()
-                .ref('/public/bets/' + eventKey + '/' + user.uid)
-                .set(this.bet, onComplete);
-      }
-    });
+     _routeEventKeyChanged(eventKey) {
+       if (!(eventKey === undefined)) {
+         var that = this;
+         firebase.app('meet-apuestas').database()
+                 .ref('/public/events/' + eventKey).once('value')
+                 .then(function(snapshot) {
+                   that.event = snapshot.val();
+                 });
+       }
+     }
+
+     _saveBet() {
+       var that = this,
+           user = firebase.app('meet-apuestas').auth().currentUser,
+           eventKey = this.routeData.eventKey,
+           onComplete = function(error) {
+             if (error == null) {
+               that.bet = {};
+               console.log('success!');
+               window.history.pushState({}, null, '/events');
+               window.dispatchEvent(new CustomEvent('location-changed'));
+             } else {
+               console.log(error);
+             }
+           };
+       this.bet.name = user.displayName;
+       this.bet.email = user.email;
+       this.bet.predictionA = parseInt(this.bet.predictionA);
+       this.bet.predictionB = parseInt(this.bet.predictionB);
+       this.bet.prediction = this.bet.predictionA + '_' + this.bet.predictionB;
+       firebase.app('meet-apuestas').database()
+               .ref('/public/bets/' + eventKey + '/' + user.uid)
+               .set(this.bet, onComplete);
+     }
+   }
+
+   // Register custom element definition using standard platform API
+   customElements.define(MyNewBet.is, MyNewBet);
   </script>
 </dom-module>

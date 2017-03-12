@@ -14,7 +14,7 @@ module.exports = {
   staticFileGlobs: [
     '/index.html',
     '/manifest.json',
-    '/bower_components/webcomponentsjs/webcomponents-lite.min.js',
+    '/bower_components/webcomponentsjs/*',
   ],
   navigateFallback: 'index.html',
   // https://github.com/Polymer/polymer-build/issues/35

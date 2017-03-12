@@ -8,7 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
@@ -175,72 +175,86 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-    Polymer({
-      is: 'my-app',
+   class MyApp extends Polymer.Element {
 
-      properties: {
-        page: {
-          type: String,
-          reflectToAttribute: true,
-          observer: '_pageChanged',
-        },
-        signedIn: {
-          type: Boolean,
-          reflectToAttribute: true
-        },
-      },
+     static get is() { return 'my-app'; }
 
-      observers: [
-        '_routePageChanged(routeData.page, signedIn)'
-      ],
+     static get properties() {
+       return {
+         page: {
+           type: String,
+           reflectToAttribute: true,
+           observer: '_pageChanged'
+         },
+         signedIn: {
+           type: Boolean,
+           reflectToAttribute: true
+         }
+       };
+     }
 
-      listeners: {
-        'sign-in': '_handleSignIn'
-      },
+     static get observers() {
+       return [
+         '_routePageChanged(routeData.page, signedIn)'
+       ];
+     }
 
-      _routePageChanged: function(page, signedIn) {
-        if (signedIn) {
-          if (page === 'login') {
-            page = null;
-          }
-          this.page = page || 'events';
-        } else {
-          this.page = 'login';
-        }
+     ready() {
+       super.ready();
+       this.addEventListener('sign-in', e => this._handleSignIn(e));
+     }
 
-        if (!this.$.drawer.persistent) {
-          this.$.drawer.close();
-        }
-      },
+     _routePageChanged(page, signedIn) {
+       if (!(page === undefined || signedIn === undefined)) {
+         if (signedIn) {
+           if (page === 'login') {
+             page = null;
+           }
+           this.page = page || 'events';
+         } else {
+           this.page = 'login';
+         }
 
-      _pageChanged: function(page) {
-        // Load page import on demand. Show 404 page if fails
-        var resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
-        this.importHref(resolvedPageUrl, null, this._showPage404, true);
-      },
+         if (!this.$.drawer.persistent) {
+           this.$.drawer.close();
+         }
+       }
+     }
 
-      _showPage404: function() {
-        this.page = 'view404';
-      },
+     _pageChanged(page) {
+       if (!(page === undefined)) {
+         // Load page import on demand. Show 404 page if fails
+         var resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
+         Polymer.importHref(resolvedPageUrl, null, this._showPage404, true);
+       }
+     }
 
-      _handleSignIn: function(e) {
-        this.$.auth.provider = e.detail.provider;
-        this._signIn();
-      },
+     _showPage404() {
+       this.page = 'view404';
+     }
 
-      _signIn: function() {
-        this.$.auth.signInWithPopup()
-            .then(function(response) {
-              console.log('success');
-            })
-            .catch(function(error) {
-              console.log(error);
-            });
-      },
+     _handleSignIn(event) {
+       console.log('handle login');
+       this.$.auth.provider = event.detail.provider;
+       this._signIn();
+     }
 
-      _signOut: function() {
-        this.$.auth.signOut();
-      }
-    });
+     _signIn() {
+       this.$.auth.signInWithPopup()
+           .then(function(response) {
+             console.log('success');
+           })
+           .catch(function(error) {
+             console.log(error);
+           });
+     }
+
+     _signOut() {
+       this.$.auth.signOut();
+     }
+   }
+
+   // Register custom element definition using standard platform API
+   customElements.define(MyApp.is, MyApp);
   </script>
 </dom-module>

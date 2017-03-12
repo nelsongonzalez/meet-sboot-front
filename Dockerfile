@@ -1,6 +1,6 @@
 FROM node:5
 
-RUN npm install -g bower polymer-cli firebase-tools
+RUN npm install -g bower polymer-cli@next firebase-tools
 
 RUN mkdir /front-sboot-gcloud
 

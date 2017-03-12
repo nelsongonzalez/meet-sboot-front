@@ -8,7 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="shared-styles.html">
@@ -56,41 +56,48 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-    Polymer({
-      is: 'my-new-event',
+   class MyNewEvent extends Polymer.Element {
 
-      properties: {
-        event: {
-          type: Object,
-          value: {}
-        }
-      },
+     static get is() { return 'my-new-event'; }
 
-      _saveEvent: function() {
-        var that = this,
-            user = firebase.app('meet-apuestas').auth().currentUser,
-            newEventKey = firebase.app('meet-apuestas').database().ref().child('events').push().key,
-            publicEvent,
-            updates = {},
-            onComplete = function(error) {
-              if (error == null) {
-                that.event = {};
-                console.log('success!');
-                window.history.pushState({}, null, '/events');
-                window.dispatchEvent(new CustomEvent('location-changed'));
-              } else {
-                console.log(error);
-              }
-            };
-        this.event.amount = parseInt(this.event.amount);
-        this.event.status = 'new';
-        publicEvent = JSON.parse(JSON.stringify(this.event));
-        publicEvent.owner = user.uid;
-        updates['/users/' + user.uid + '/events/' + newEventKey] = this.event;
-        updates['/public/events/' + newEventKey] = publicEvent;
-        firebase.app('meet-apuestas').database().ref()
-                .update(updates, onComplete);
-      }
-    });
+     static get properties() {
+       return {
+         event: {
+           type: Object,
+           value: {}
+         }
+       };
+     }
+
+     _saveEvent() {
+       var that = this,
+           user = firebase.app('meet-apuestas').auth().currentUser,
+           newEventKey = firebase.app('meet-apuestas').database().ref().child('events').push().key,
+           publicEvent,
+           updates = {},
+           onComplete = function(error) {
+             if (error == null) {
+               that.event = {};
+               console.log('success!');
+               window.history.pushState({}, null, '/events');
+               window.dispatchEvent(new CustomEvent('location-changed'));
+             } else {
+               console.log(error);
+             }
+           };
+       this.event.amount = parseInt(this.event.amount);
+       this.event.status = 'new';
+       publicEvent = JSON.parse(JSON.stringify(this.event));
+       publicEvent.owner = user.uid;
+       updates['/users/' + user.uid + '/events/' + newEventKey] = this.event;
+       updates['/public/events/' + newEventKey] = publicEvent;
+       firebase.app('meet-apuestas').database().ref()
+               .update(updates, onComplete);
+     }
+
+   }
+
+   // Register custom element definition using standard platform API
+   customElements.define(MyNewEvent.is, MyNewEvent);
   </script>
 </dom-module>
