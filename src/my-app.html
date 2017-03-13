@@ -50,6 +50,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: block;
       }
 
+     app-drawer-layout:not([narrow]) [drawer-toggle] {
+       display: none;
+     }
+
       app-header {
         color: var(--app-header-color);
         background-color: var(--primary-color);
@@ -92,18 +96,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        display: none;
      }
 
-     .menu-btn {
-       display: none;
-     }
-
      /* small screen */
      @media (max-width: 767px) {
-       :host {
-         padding-top: 64px;
-       }
-       .menu-btn {
-         display: block;
-       }
        :host(:not([page=events])) .menu-btn {
          display: none;
        }
@@ -133,7 +127,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <app-drawer-layout fullbleed>
       <!-- Drawer content -->
-      <app-drawer id="drawer">
+      <app-drawer id="drawer" slot="drawer">
         <app-toolbar>Menú</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a class="login-btn" name="login" href="/login">Ingresar</a>
@@ -144,7 +138,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <!-- Main content -->
       <app-header-layout has-scrolling-region>
 
-        <app-header condenses reveals effects="waterfall">
+        <app-header slot="header" condenses reveals effects="waterfall">
           <app-toolbar>
             <paper-icon-button class="menu-btn" icon="my-icons:menu" drawer-toggle></paper-icon-button>
             <a class="back-btn" href="/events" tabindex="-1">
