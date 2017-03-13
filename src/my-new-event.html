@@ -32,8 +32,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <div class="card">
-      <paper-input label="Equipo local" value="{{event.teamA}}"></paper-input>
-      <paper-input label="Equipo rival" value="{{event.teamB}}"></paper-input>
+      <paper-input
+          label="Equipo local"
+          value="{{event.teamA}}"
+          maxlength="30"></paper-input>
+      <paper-input
+          label="Equipo rival"
+          value="{{event.teamB}}"
+          maxlength="30"></paper-input>
       <!-- <paper-input
            label="Fecha"
            value="{{event.date}}"
@@ -48,7 +54,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
            pattern="\d{2}:\d{2}"
            auto-validate
            error-message="Ingrese una hora con el formato hh:mm"></paper-input> -->
-      <paper-input label="Monto para apuestas" value="{{event.amount}}" type="number">
+      <paper-input
+          label="Monto para apuestas"
+          value="{{event.amount}}"
+          type="number"
+          allowed-pattern="[\d/]">
         <div prefix>$&nbsp;</div>
       </paper-input>
       <paper-button on-tap="_saveEvent" raised>Guardar</paper-button>

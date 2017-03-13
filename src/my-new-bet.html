@@ -41,11 +41,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         tail="{{subroute}}"></app-route>
 
     <div class="card">
-      <paper-input value="Apostar $[[event.amount]] en [[event.teamA]] vs [[event.teamB]]" disabled></paper-input>
-      <paper-input label="Marcador del equipo local" value="{{bet.predictionA}}" type="number">
+      <paper-input
+          value="Apostar $[[event.amount]] en [[event.teamA]] vs [[event.teamB]]"
+          disabled></paper-input>
+      <paper-input
+          label="Marcador del equipo local"
+          value="{{bet.predictionA}}"
+          type="number"
+          allowed-pattern="[\d/]">
         <div prefix>[[event.teamA]]&nbsp;</div>
       </paper-input>
-      <paper-input label="Marcador del equipo rival" value="{{bet.predictionB}}" type="number">
+      <paper-input
+          label="Marcador del equipo rival"
+          value="{{bet.predictionB}}"
+          type="number"
+          allowed-pattern="[\d/]">
         <div prefix>[[event.teamB]]&nbsp;</div>
       </paper-input>
       <paper-button on-tap="_saveBet" raised>Apostar</paper-button>
