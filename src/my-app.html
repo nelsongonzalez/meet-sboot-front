@@ -1,12 +1,12 @@
 <!--
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
+     @license
+     Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+     This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+     The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+     The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+     Code distributed by Google as part of the polymer project is also
+     subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+   -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
@@ -25,59 +25,61 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-database-script.html">
 <link rel="import" href="my-icons.html">
+<link rel="import" href="shout.html">
+<link rel="import" href="greeting.html">
 
 <dom-module id="my-app">
   <template>
     <style>
-      :host {
-        --primary-text-color: var(--paper-grey-900);
-        --primary-background-color: var(--paper-grey-50);
-        --secondary-text-color: var(--paper-grey-600);
-        --disabled-text-color: var(--paper-grey-500);
-        --divider-color: var(--paper-grey-400);
-        --error-color: var(--paper-deep-orange-a700);
+     :host {
+       --primary-text-color: var(--paper-grey-900);
+       --primary-background-color: var(--paper-grey-50);
+       --secondary-text-color: var(--paper-grey-600);
+       --disabled-text-color: var(--paper-grey-500);
+       --divider-color: var(--paper-grey-400);
+       --error-color: var(--paper-deep-orange-a700);
 
-        --primary-color: var(--paper-blue-grey-500);
-        --light-primary-color: var(--paper-blue-grey-100);
-        --dark-primary-color: var(--paper-blue-grey-700);
-        --accent-color: var(--paper-deep-purple-a200);
-        --light-accent-color: var(--paper-deep-purple-a100);
-        --dark-accent-color: var(--paper-deep-purple-a400);
+       --primary-color: var(--paper-blue-grey-500);
+       --light-primary-color: var(--paper-blue-grey-100);
+       --dark-primary-color: var(--paper-blue-grey-700);
+       --accent-color: var(--paper-deep-purple-a200);
+       --light-accent-color: var(--paper-deep-purple-a100);
+       --dark-accent-color: var(--paper-deep-purple-a400);
 
-        --app-header-color: var(--paper-blue-grey-50);
-        --app-accent-background-color: var(--paper-blue-grey-100);
+       --app-header-color: var(--paper-blue-grey-50);
+       --app-accent-background-color: var(--paper-blue-grey-100);
 
-        display: block;
-      }
+       display: block;
+     }
 
      app-drawer-layout:not([narrow]) [drawer-toggle] {
        display: none;
      }
 
-      app-header {
-        color: var(--app-header-color);
-        background-color: var(--primary-color);
-      }
-      app-header paper-icon-button {
-        --paper-icon-button-ink-color: var(--app-header-color);
-      }
+     app-header {
+       color: var(--app-header-color);
+       background-color: var(--primary-color);
+     }
+     app-header paper-icon-button {
+       --paper-icon-button-ink-color: var(--app-header-color);
+     }
 
-      .drawer-list {
-        margin: 0 20px;
-      }
+     .drawer-list {
+       margin: 0 20px;
+     }
 
-      .drawer-list a {
-        display: block;
-        padding: 0 16px;
-        text-decoration: none;
-        color: var( --primary-text-color);
-        line-height: 40px;
-      }
+     .drawer-list a {
+       display: block;
+       padding: 0 16px;
+       text-decoration: none;
+       color: var( --primary-text-color);
+       line-height: 40px;
+     }
 
-      .drawer-list a.iron-selected {
-        color: var( --primary-text-color);
-        font-weight: bold;
-      }
+     .drawer-list a.iron-selected {
+       color: var( --primary-text-color);
+       font-weight: bold;
+     }
 
      .back-btn {
        color: var(--app-header-color);
@@ -169,7 +171,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-   class MyApp extends Polymer.Element {
+   class MyApp extends Shout(Greeting(Polymer.Element)) {
 
      static get is() { return 'my-app'; }
 
@@ -193,18 +195,47 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        ];
      }
 
+     constructor() {
+       super();
+       console.log('constructor');
+     }
+
+     connectedCallback() {
+       super.connectedCallback();
+       console.log('connectedCallback');
+     }
+
+     disconnectedCallback() {
+       super.disconnectedCallback();
+       console.log('disconnectedCallback');
+     }
+
+     attributeChangedCallback() {
+       super.attributeChangedCallback();
+       console.log('attributeChangedCallback');
+     }
+
      ready() {
        super.ready();
-       this.addEventListener('sign-in', e => this._handleSignIn(e));
+       console.log('ready');
+       this.addEventListener('sign-in', (e) => this._handleSignIn(e));
+       // When possible, use afterNextRender to defer non-critical
+       // work until after first paint.
+       Polymer.RenderStatus.afterNextRender(this, () => {
+         console.log('afterNextRender');
+       });
      }
 
      _routePageChanged(page, signedIn) {
        if (!(page === undefined || signedIn === undefined)) {
+         console.log(`_routePageChanged(page = ${page}, signedIn = ${signedIn})`);
+         console.log(this._shout(this._greet('Nelson')));
          if (signedIn) {
            if (page === 'login') {
-             page = null;
+             this.page = null;
+           } else {
+             this.page = page || 'events';
            }
-           this.page = page || 'events';
          } else {
            this.page = 'login';
          }
@@ -217,6 +248,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
      _pageChanged(page) {
        if (!(page === undefined)) {
+         console.log(`_PageChanged(page = ${page})`);
          // Load page import on demand. Show 404 page if fails
          var resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
          Polymer.importHref(resolvedPageUrl, null, this._showPage404, true);
@@ -227,20 +259,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        this.page = 'view404';
      }
 
-     _handleSignIn(event) {
-       console.log('handle login');
-       this.$.auth.provider = event.detail.provider;
+     _handleSignIn(e) {
+       this.$.auth.provider = e.detail.provider;
        this._signIn();
      }
 
      _signIn() {
        this.$.auth.signInWithPopup()
-           .then(function(response) {
-             console.log('success');
-           })
-           .catch(function(error) {
-             console.log(error);
-           });
+           .then((response) => console.log('success'))
+           .catch((error) => console.log(error));
      }
 
      _signOut() {

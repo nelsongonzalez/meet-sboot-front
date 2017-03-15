@@ -1,12 +1,12 @@
 <!--
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
+     @license
+     Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+     This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+     The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+     The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+     Code distributed by Google as part of the polymer project is also
+     subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+   -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
@@ -16,51 +16,54 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="my-new-event">
   <template>
     <style include="shared-styles">
-      :host {
-        display: block;
+     :host {
+       display: block;
 
-        padding: 10px;
-      }
+       padding: 10px;
+     }
 
-     div[prefix] {
+     div[slot=prefix] {
        color: var(--secondary-text-color);
      }
 
-     paper-input[focused] div[prefix] {
+     paper-input[focused] div[slot=prefix] {
        color: var(--primary-color);
      }
     </style>
 
     <div class="card">
       <paper-input
+          id="teamA"
           label="Equipo local"
           value="{{event.teamA}}"
-          maxlength="30"></paper-input>
+          maxlength="30"
+          required
+          error-message="Ingrese un nombre"
+          auto-validate></paper-input>
+
       <paper-input
+          id="teamB"
           label="Equipo rival"
           value="{{event.teamB}}"
-          maxlength="30"></paper-input>
-      <!-- <paper-input
-           label="Fecha"
-           value="{{event.date}}"
-           allowed-pattern="[\d/]"
-           pattern="\d{2}/\d{2}/\d{4}"
-           auto-validate
-           error-message="Ingrese una fecha con el formato dd/mm/yyyy"></paper-input>
-           <paper-input
-           label="Hora"
-           value="{{event.time}}"
-           allowed-pattern="[\d:]"
-           pattern="\d{2}:\d{2}"
-           auto-validate
-           error-message="Ingrese una hora con el formato hh:mm"></paper-input> -->
+          maxlength="30"
+          required
+          error-message="Ingrese un nombre"
+          auto-validate></paper-input>
+
       <paper-input
+          id="amount"
           label="Monto para apuestas"
           value="{{event.amount}}"
           type="number"
-          allowed-pattern="[\d/]">
-        <div prefix>$&nbsp;</div>
+          allowed-pattern="[0-9]"
+          required
+          min="1"
+          max="500"
+          error-message="Ingrese un número entre 1 y 500"
+          auto-validate>
+        <div slot="prefix">$&nbsp;</div>
       </paper-input>
+
       <paper-button on-tap="_saveEvent" raised>Guardar</paper-button>
     </div>
   </template>
@@ -80,14 +83,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      }
 
      _saveEvent() {
-       var that = this,
-           user = firebase.app('meet-apuestas').auth().currentUser,
+       if (this.$.teamA.invalid || this.$.teamB.invalid || this.$.amount.invalid) {
+         return;
+       }
+       let user = firebase.app('meet-apuestas').auth().currentUser,
            newEventKey = firebase.app('meet-apuestas').database().ref().child('events').push().key,
            publicEvent,
            updates = {},
-           onComplete = function(error) {
+           onComplete = (error) => {
              if (error == null) {
-               that.event = {};
+               this.event = {};
                console.log('success!');
                window.history.pushState({}, null, '/events');
                window.dispatchEvent(new CustomEvent('location-changed'));

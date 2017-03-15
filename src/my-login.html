@@ -1,12 +1,12 @@
 <!--
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
+     @license
+     Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+     This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+     The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+     The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+     Code distributed by Google as part of the polymer project is also
+     subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+   -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
@@ -16,11 +16,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="my-login">
   <template>
     <style include="shared-styles">
-      :host {
-        display: block;
+     :host {
+       display: block;
 
-        padding: 10px;
-      }
+       padding: 10px;
+     }
 
      paper-button {
        margin-bottom: 16px;
@@ -64,15 +64,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="flex-center-justified">
         <paper-button class="google" on-tap="_login" data-provider="google" raised>Google</paper-button>
       </div>
-      <!-- <div class="flex-center-justified">
-           <paper-button class="github" on-tap="_login" data-provider="github" raised>Github</paper-button>
-           </div>
-           <div class="flex-center-justified">
-           <paper-button class="facebook" on-tap="_login" data-provider="facebook" raised>Facebook</paper-button>
-           </div>
-           <div class="flex-center-justified">
-           <paper-button class="twitter" on-tap="_login" data-provider="twitter" raised>Twitter</paper-button>
-           </div> -->
     </div>
   </template>
 
@@ -82,7 +73,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      static get is() { return 'my-login'; }
 
      _login(e) {
-       console.log('login', e.target.dataset.provider);
        this.dispatchEvent(new CustomEvent('sign-in', {
          bubbles: true, composed: true, detail: {
            provider: e.target.dataset.provider

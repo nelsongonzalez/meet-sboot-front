@@ -1,12 +1,12 @@
 <!--
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
+     @license
+     Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+     This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+     The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+     The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+     Code distributed by Google as part of the polymer project is also
+     subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+   -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
@@ -18,17 +18,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="my-new-bet">
   <template>
     <style include="shared-styles">
-      :host {
-        display: block;
+     :host {
+       display: block;
 
-        padding: 10px;
-      }
+       padding: 10px;
+     }
 
-     div[prefix] {
+     div[slot=prefix] {
        color: var(--secondary-text-color);
      }
 
-     paper-input[focused] div[prefix] {
+     paper-input[focused] div[slot=prefix] {
        color: var(--primary-color);
      }
     </style>
@@ -44,20 +44,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <paper-input
           value="Apostar $[[event.amount]] en [[event.teamA]] vs [[event.teamB]]"
           disabled></paper-input>
+
       <paper-input
+          id="predictionA"
           label="Marcador del equipo local"
           value="{{bet.predictionA}}"
           type="number"
-          allowed-pattern="[\d/]">
-        <div prefix>[[event.teamA]]&nbsp;</div>
+          allowed-pattern="[0-9]"
+          required
+          min="0"
+          max="99"
+          error-message="Ingrese un número entre 0 y 99"
+          auto-validate>
+        <div slot="prefix">[[event.teamA]]&nbsp;</div>
       </paper-input>
+
       <paper-input
+          id="predictionB"
           label="Marcador del equipo rival"
           value="{{bet.predictionB}}"
           type="number"
-          allowed-pattern="[\d/]">
-        <div prefix>[[event.teamB]]&nbsp;</div>
+          allowed-pattern="[0-9]"
+          required
+          min="0"
+          max="99"
+          error-message="Ingrese un número entre 0 y 99"
+          auto-validate>
+        <div slot="prefix">[[event.teamB]]&nbsp;</div>
       </paper-input>
+
       <paper-button on-tap="_saveBet" raised>Apostar</paper-button>
     </div>
   </template>
@@ -84,22 +99,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
      _routeEventKeyChanged(eventKey) {
        if (!(eventKey === undefined)) {
-         var that = this;
          firebase.app('meet-apuestas').database()
                  .ref('/public/events/' + eventKey).once('value')
-                 .then(function(snapshot) {
-                   that.event = snapshot.val();
-                 });
+                 .then((snapshot) => this.event = snapshot.val());
        }
      }
 
      _saveBet() {
-       var that = this,
-           user = firebase.app('meet-apuestas').auth().currentUser,
+       if (this.$.predictionA.invalid || this.$.predictionB.invalid) {
+         return;
+       }
+       let user = firebase.app('meet-apuestas').auth().currentUser,
            eventKey = this.routeData.eventKey,
-           onComplete = function(error) {
+           onComplete = (error) => {
              if (error == null) {
-               that.bet = {};
+               this.bet = {};
                console.log('success!');
                window.history.pushState({}, null, '/events');
                window.dispatchEvent(new CustomEvent('location-changed'));

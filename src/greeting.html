@@ -1,0 +1,16 @@
+<script>
+ let Greeting = (superClass) => class extends superClass {
+
+   static get properties() {
+     return {
+       sound: {
+         type: String
+       }
+     };
+   }
+
+   _greet(name) {
+     return 'hello ' + name;
+   }
+ }
+</script>
