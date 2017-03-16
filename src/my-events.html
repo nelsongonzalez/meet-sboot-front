@@ -55,10 +55,6 @@
        display: none;
      }
 
-     paper-card[winners="0"] .card-actions {
-       display: none;
-     }
-
      .spacer {
        display: block;
        height: 8px;
@@ -91,6 +87,7 @@
           <div class="card-actions">
             <paper-button on-tap="_navToNewBet" data-event$="[[event.$key]]" class="new">Apostar</paper-button>
             <template is="dom-if" if="[[_ownEvent(event)]]">
+              <paper-button on-tap="_navToNewBettors" data-event$="[[event.$key]]">Apostadores</paper-button>
               <paper-button on-tap="_closeEvent" data-event$="[[event.$key]]" class="new">Cerrar</paper-button>
             </template>
             <template is="dom-if" if="[[_ownEvent(event)]]">
@@ -119,6 +116,12 @@
      _navToNewBet(e) {
        var eventKey = e.target.dataset.event;
        window.history.pushState({}, null, '/new-bet/' + eventKey);
+       window.dispatchEvent(new CustomEvent('location-changed'));
+     }
+
+     _navToNewBettors(e) {
+       var eventKey = e.target.dataset.event;
+       window.history.pushState({}, null, '/bettors/' + eventKey);
        window.dispatchEvent(new CustomEvent('location-changed'));
      }
 

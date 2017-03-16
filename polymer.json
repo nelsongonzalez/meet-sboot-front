@@ -8,6 +8,7 @@
     "src/my-new-bet.html",
     "src/my-new-match.html",
     "src/my-winners.html",
+    "src/my-bettors.html",
     "src/my-view404.html"
   ],
   "sources": [
