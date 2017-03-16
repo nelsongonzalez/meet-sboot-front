@@ -26,6 +26,10 @@
         ".read": "auth != null",
         ".write": "auth != null"
       }
+    },
+    "server": {
+      ".read": "auth != null",
+      ".write": "auth != null"
     }
   }
 }
