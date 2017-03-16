@@ -20,11 +20,11 @@
       },
       "events": {
         ".read": "auth != null",
-        ".write": "auth != null",
+        ".write": "auth != null"
       },
       "winners": {
         ".read": "auth != null",
-        ".write": "auth != null",
+        ".write": "auth != null"
       }
     }
   }
