@@ -1,13 +1,31 @@
 {
   "rules": {
+    "users": {
+      "$uid": {
+        "events": {
+          ".read": "auth != null",
+        	".write": "$uid === auth.uid"
+        }
+      }
+    },
     "public": {
       "bets": {
         "$event": {
-          ".indexOn": ["prediction"]
+          ".indexOn": ["prediction"],
+          ".read": "auth != null",
+          "$uid": {
+        	  ".write": "$uid === auth.uid"
+          }
         }
+      },
+      "events": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+      },
+      "winners": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+      }
     }
-    },
-    ".read": true,
-    ".write": true
   }
 }
